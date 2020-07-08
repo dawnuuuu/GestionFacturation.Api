@@ -1,6 +1,8 @@
-﻿namespace GestionFacturation.Api.Auth
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace GestionFacturation.Api.Auth
 {
-    public static class Roles
+    public class Roles : IdentityRole
     {
         public const string Admin = "Admin";
         public const string Technicien = "Technicien";

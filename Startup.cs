@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace GestionFacturation.Api
 {
@@ -33,6 +34,22 @@ namespace GestionFacturation.Api
         
             services.AddDbContext<ApplicationDbContext>();
 
+            services.AddIdentity<User, Roles>(option =>
+            {
+                option.Password.RequireDigit = false;
+                option.Password.RequireLowercase = true;
+                option.Password.RequiredLength = 4;
+                option.Password.RequiredUniqueChars = 0;
+                option.Password.RequireUppercase = false;
+                option.Password.RequireNonAlphanumeric = false;
+                option.SignIn.RequireConfirmedEmail = true;
+                option.Lockout.MaxFailedAccessAttempts = 5;
+                option.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+
+
+            })
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
@@ -41,11 +58,15 @@ namespace GestionFacturation.Api
                 c.UseInlineDefinitionsForEnums();
             });
 
-            // HTTP Basic Auth anschalten und UserService registrieren!
-            services.AddAuthentication("BasicAuthentication")
+            // Switch on HTTP Basic Auth and register UserService!
+                        services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
             services.AddTransient(typeof(IUserService), typeof(UserService));
+
+            services.AddCors();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,6 +92,7 @@ namespace GestionFacturation.Api
 
             app.UseAuthorization();
 
+            app.UseCors(x => x.WithOrigins("").AllowAnyHeader().AllowAnyMethod());
 
             app.UseEndpoints(endpoints =>
             {

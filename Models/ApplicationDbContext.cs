@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GestionFacturation.Api.Auth;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace GestionFacturation.Api.Models
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<User<Guid>, Roles<Guid>, Guid>
     {
 
         public DbSet<Article> Articles { get; set; }
@@ -52,36 +55,27 @@ namespace GestionFacturation.Api.Models
             {
                 new Client()
                 {
-                    Prenom = "Askouri",
-                    Nom = "Mohamed",
-                    Ville = "Köln",
-                    Adresse = "Deutz-Kalker-Staße 25",
-                    Telephone = "01793226673",
-                    CodePostal = 50679,
-                    Email = "contact@askouri.de"
+                    Prenom = "Khtatba",
+                    Nom = "Doha",
+                    Ville = "Tanger",
+                    Adresse = "Complexe El Fajr A imm 4 no 98 Tanger",
+                    Telephone = "0638253210",
+                    CodePostal = 90000,
+                    Email = "khtatbadoha@gmail.com"
                 },
 
                 new Client()
                 {
-                    Prenom = "Bihi",
-                    Nom = "Adam",
-                    Ville = "Köln",
-                    Adresse = "Deutz-Kalker-Staße 24",
+                    Prenom = "Ballouti",
+                    Nom = "Ouissal",
+                    Ville = "Ksar Kbir",
+                    Adresse = "Idrissia",
                     Telephone = "01746226673",
-                    CodePostal = 50679,
-                    Email = "contact@askouri.de"
+                    CodePostal = 9000,
+                    Email = "ouissal1966@gmail.com"
                 },
 
-                new Client()
-                {
-                    Prenom = "Bentahar",
-                    Nom = "Anas",
-                    Ville = "Köln",
-                    Adresse = "Deutz-Kalker-Staße 24",
-                    Telephone = "01746226673",
-                    CodePostal = 50679,
-                    Email = "contact@askouri.de"
-                }
+                
 
             });
             context.SaveChanges();
@@ -90,3 +84,4 @@ namespace GestionFacturation.Api.Models
         }
     }
 }
+

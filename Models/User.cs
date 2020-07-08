@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GestionFacturation.Api.Auth;
+using Microsoft.AspNetCore.Identity;
 
 namespace GestionFacturation.Api.Models
 {
-    public class User
+    public class User: IdentityUser
     {
 
         public Guid Id { get; set; }
