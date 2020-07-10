@@ -1,13 +1,11 @@
-﻿using GestionFacturation.Api.Auth;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace GestionFacturation.Api.Models
 {
-    public class ApplicationDbContext : IdentityDbContext<User<Guid>, Roles<Guid>, Guid>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,string>
     {
-
+        
         public DbSet<Article> Articles { get; set; }
         public DbSet<Categorie> Categories { get; set; }
         public DbSet<Client> Clients { get; set; }
@@ -16,8 +14,7 @@ namespace GestionFacturation.Api.Models
         public DbSet<Paiement> Paiements { get; set; }
         public DbSet<Produit> Produits { get; set; }
         public DbSet<Stock> Stocks { get; set; }
-        public DbSet<Utilisateur> Utilisateurs { get; set; }
-        public DbSet<User> Users { get; set; }
+       
         
 
 
@@ -73,7 +70,7 @@ namespace GestionFacturation.Api.Models
                     Telephone = "01746226673",
                     CodePostal = 9000,
                     Email = "ouissal1966@gmail.com"
-                },
+                }
 
                 
 

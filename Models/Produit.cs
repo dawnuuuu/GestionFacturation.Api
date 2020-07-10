@@ -16,5 +16,7 @@ namespace GestionFacturation.Api.Models
         public Stock Stock { get; set; }
 
         public byte[] Image { get; set; }
+
+        public double Prix { get; set; }
     }
 }

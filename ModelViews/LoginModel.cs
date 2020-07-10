@@ -10,6 +10,9 @@ namespace GestionFacturation.Api.ModelViews
     {
         [StringLength(120), Required]
         public string UserName { get; set; }
+
+        [StringLength(120), Required]
+        public string Email { get; set; }
         [Required]
         public string Password { get; set; }
         [Required]

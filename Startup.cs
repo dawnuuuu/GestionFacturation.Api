@@ -1,19 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GestionFacturation.Api.Auth;
 using GestionFacturation.Api.Models;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
 namespace GestionFacturation.Api
 {
@@ -29,43 +23,48 @@ namespace GestionFacturation.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.Lax;
+            });
 
             services.AddControllers();
-        
             services.AddDbContext<ApplicationDbContext>();
-
-            services.AddIdentity<User, Roles>(option =>
+            services.AddIdentity<ApplicationUser, ApplicationRole>(option =>
             {
-                option.Password.RequireDigit = false;
+                option.Password.RequireDigit = true;
                 option.Password.RequireLowercase = true;
-                option.Password.RequiredLength = 4;
+                option.Password.RequiredLength = 6;
                 option.Password.RequiredUniqueChars = 0;
-                option.Password.RequireUppercase = false;
+                option.Password.RequireUppercase = true;
                 option.Password.RequireNonAlphanumeric = false;
                 option.SignIn.RequireConfirmedEmail = true;
                 option.Lockout.MaxFailedAccessAttempts = 5;
                 option.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-
-
             })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            // Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "GestionFacturation.Api", Version = "v1" });
-                c.AddSwaggerBasicAuth();
-                c.UseInlineDefinitionsForEnums();
-            });
-
-            // Switch on HTTP Basic Auth and register UserService!
-                        services.AddAuthentication("BasicAuthentication")
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
-
-            services.AddTransient(typeof(IUserService), typeof(UserService));
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
             services.AddCors();
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+           .AddCookie(options =>
+           {
+               options.Cookie.HttpOnly = true;
+               options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+               options.SlidingExpiration = true;
+               options.LogoutPath = "/Account/Logout";
+               options.Cookie.SameSite = SameSiteMode.Lax;
+               options.Cookie.IsEssential = true;
+           });
+           
 
         }
 
@@ -78,26 +77,21 @@ namespace GestionFacturation.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "GestionFacturation.Api");
-            });
-
-
+            app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseCors(x => x.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod()
+            .AllowCredentials());
 
+            app.UseCookiePolicy();
             app.UseAuthentication();
-
             app.UseAuthorization();
-
-            app.UseCors(x => x.WithOrigins("").AllowAnyHeader().AllowAnyMethod());
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+
         }
     }
 }

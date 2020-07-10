@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GestionFacturation.Api.Auth;
 using GestionFacturation.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +12,7 @@ namespace GestionFacturation.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = "Admin")]
     public class BaseController<T> : Controller where T : class
     {
 
@@ -28,8 +27,6 @@ namespace GestionFacturation.Api.Controllers
         }
 
 
-        //[HttpGet]
-        //public virtual IEnumerable<T> Get() => _context.Set<T>();
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<T>>> GetAsync()
@@ -37,16 +34,7 @@ namespace GestionFacturation.Api.Controllers
             return await _context.Set<T>().ToListAsync();
         }
 
-        //[HttpPost]
-        //public virtual ActionResult<T> PostItem(T item)
-        //{
-
-        //    var itm = _context.Add(item).Entity;
-
-        //    _context.SaveChanges();
-
-        //    return itm;
-        //} 
+       
 
         
         [HttpPost]
@@ -74,19 +62,6 @@ namespace GestionFacturation.Api.Controllers
         }
 
 
-        //public void Put(int id, [FromBody] Employee employee)
-        //{
-        //    using (EmployeeDBContext dbContext = new EmployeeDBContext())
-        //    {
-        //        var entity = dbContext.Employees.FirstOrDefault(e => e.ID == id);
-        //        entity.FirstName = employee.FirstName;
-        //        entity.LastName = employee.LastName;
-        //        entity.Gender = employee.Gender;
-        //        entity.Salary = employee.Salary;
-        //        dbContext.SaveChanges();
-        //    }
-        //}
-
 
         [HttpPut]
         public async Task<IActionResult> PutObject(T item)
@@ -109,8 +84,6 @@ namespace GestionFacturation.Api.Controllers
                 entity.Nom = itm.Nom;
                 entity.Prenom = itm.Prenom;
                 entity.Ville = itm.Ville;
-
-                
 
             }
             else if(type==typeof(Article))
@@ -209,24 +182,6 @@ namespace GestionFacturation.Api.Controllers
                 if (itm == null) return NotFound();
 
                 entity.Quantite = itm.Quantite;
-
-            }
-            else if (type == typeof(Utilisateur))
-            {
-                var entity = _context.Utilisateurs.FirstOrDefault(e => e.Id == (Guid)type.GetProperty("Id").GetValue(item));
-
-                Utilisateur itm = item as Utilisateur;
-
-                if (itm == null) return NotFound();
-
-                entity.Adresse = itm.Adresse;
-                entity.Nom = itm.Nom;
-                entity.Telephone = itm.Adresse;
-                entity.Prenom = itm.Prenom;
-                entity.Password = itm.Password;
-                entity.Type = itm.Type;
-                entity.UserName = itm.UserName;
-
             }
 
             var saved= await _context.SaveChangesAsync();

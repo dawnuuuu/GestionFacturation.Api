@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using GestionFacturation.Api.Auth;
 using GestionFacturation.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
